@@ -86,6 +86,9 @@ class x12xml_simple(x12xml):
                     #self.writer.empty(u"ele", attrs={u'id': child_node.id})
                 else:
                     (xname, attrib) = self._get_ele_info(child_node.id)
+                    curr = attrib['id']+ "_" + child_node.name
+
+                    attrib['id'] = re.sub(r'[^\w+]', "_", curr.strip()).lower()
                     self.writer.elem(xname, seg_data.get_value('%02i' % (i + 1)), attrib)
             else:
                 raise EngineError('Node must be a either an element or a composite')

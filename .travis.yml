@@ -1,5 +1,9 @@
 language: python
 
+env:
+  global:
+    secure: EBxCPGYFzRKNxnmxiOFXGUSzeFnYuYYspzmLF1PKwWaxd9lhlGuWhdkDMnG7dtyCsLbvsykRlG6cbTHJTCMXtLezyqITX5J6PRJGOan7QmbClpXoPbgq8mrI2wOfc6JesGSy/CecU1TdAyCZeeN9GiF2dRaPxOkY2pfYZM0DqjX68ylwzmN5oel+yKS0HWZrJyP7n/2qzxCm19pGnAqlCJnl4LrEc22W45qUh/V/vmkQ6QU6qgzPzAKGdi69UB0cQgMGdbGGidAQ0+6S17FTg+KHnwCxSpqcxIe8u5pV3ZQB+QSBkVMzsdePZgMEpK4YmWt/wPQgSLNyCv4Y87J4IRJ2X3i7OvvrxMSzesuwaDIjMv4/FXlqAU0jbr4zc2CFUUf2g5vfdi3HIQJUt/EQiMCJiObdt2F+xQPe80MjO3PUXjXop6IYIm0bfxRaGw8hL5pyompI2j0JcE0j3dtIExihSH9kzXO0huhLrdsFdItCbkU7mq0VhXwtZDFiFAxNnilPsvQ7Q01QlLIb5rAmqf+iAijHLQ23v8ciLpKWHSaeWDiJEeV/j8Oltiw6pkL5kXKFUmvQgLuRgkS1svIYi5ueFaNtSFY+xOz3KN3CCms1oorhQ+eikVKHNJ39Tcv6OF9XMXEGGUM6+CdHJrv6kkzLjmEB1wX8ti66NQmQS8M=
+
 install:
     - pip install coveralls
 
@@ -8,3 +12,4 @@ script:
 
 after_success:
     - coveralls
+    - ./.travis.deploy.sh

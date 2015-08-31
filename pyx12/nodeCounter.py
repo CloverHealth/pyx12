@@ -12,8 +12,7 @@
 Loop and segment counter
 """
 from collections import OrderedDict
-import pyx12.path
-from decorators import dump_args
+from pyx12.path import X12Path
 
 
 class NodeCounter(object):
@@ -72,7 +71,7 @@ class NodeCounter(object):
 
     @staticmethod
     def makeX12Path(xpath):
-        if isinstance(xpath, pyx12.path.X12Path):
+        if isinstance(xpath, X12Path):
             return xpath
         else:
-            return pyx12.path.X12Path(xpath)
+            return X12Path(xpath)

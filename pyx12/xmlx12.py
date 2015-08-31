@@ -1,3 +1,4 @@
+#pylint: disable-all
 ######################################################################
 # Copyright 
 #   John Holland <john@zoner.org>

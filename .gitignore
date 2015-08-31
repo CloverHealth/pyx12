@@ -13,3 +13,4 @@ pkg-plist
 TestResults/
 obj/
 testenv/
+*.idea/*

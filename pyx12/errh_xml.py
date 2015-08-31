@@ -1,3 +1,4 @@
+#pylint: disable-all
 ######################################################################
 # Copyright (c)
 #   John Holland <john@zoner.org>
@@ -20,8 +21,8 @@ import tempfile
 import os
 
 # Intrapackage imports
-from errors import EngineError
-from xmlwriter import XMLWriter
+from pyx12.errors import EngineError
+from pyx12.xmlwriter import XMLWriter
 
 #class error_node:
 #    def __init__(self)

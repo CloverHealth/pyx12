@@ -56,7 +56,7 @@ class X12Path(object):
         self.subele_idx = None
         self.relative = None
         self.loop_list = []
-        if path_str == '':
+        if path_str == '' or not isinstance(path_str, str):
             self.relative = True
             return
         if path_str[0] == '/':

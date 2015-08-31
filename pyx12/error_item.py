@@ -1,3 +1,4 @@
+#pylint: disable-all
 ######################################################################
 # Copyright 
 #   John Holland <john@zoner.org>
@@ -11,7 +12,7 @@
 """
 """
 
-from errors import EngineError
+from pyx12.errors import EngineError
 
 isa_errors = ('000', '001', '002', '003', '004', '005', '006', '007', '008',
               '009', '010', '011', '012', '013', '014', '015', '016',

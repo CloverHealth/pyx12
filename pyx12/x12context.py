@@ -1,3 +1,4 @@
+#pylint: disable-all
 #####################################################################
 # Copyright 
 #   John Holland <john@zoner.org>
@@ -23,14 +24,14 @@ Interface to read and alter segments
 #import os.path
 
 # Intrapackage imports
-import pyx12
-import error_handler
-import errors
-import map_index
-import map_if
-import x12file
-import path
-from map_walker import walk_tree, pop_to_parent_loop  # get_pop_loops, get_push_loops
+import pyx12.pyx12
+import pyx12.error_handler
+import pyx12.errors
+import pyx12.map_index
+import pyx12.map_if
+import pyx12.x12file
+import pyx12.path
+from pyx12.map_walker import walk_tree, pop_to_parent_loop  # get_pop_loops, get_push_loops
 
 
 class X12DataNode(object):

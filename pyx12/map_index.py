@@ -24,17 +24,17 @@ import xml.etree.cElementTree as et
 
 class map_index(object):
     """
-    Interface to the maps.xml file
+    Interface to the map.xml file
     """
     def __init__(self, base_path=None):
         """
-        @param base_path: Override directory containing maps.xml.  If None,
+        @param base_path: Override directory containing map.xml.  If None,
                     uses package resource folder
         @type base_path: string
         """
         logger = logging.getLogger('pyx12')
         self.maps = []
-        maps_index_file = 'maps.xml'
+        maps_index_file = 'map.xml'
         if base_path is not None:
             logger.debug("Looking for map index file '{}' in map_path '{}'".format(maps_index_file, base_path))
             fd = open(os.path.join(base_path, maps_index_file))

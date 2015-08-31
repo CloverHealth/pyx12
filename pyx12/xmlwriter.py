@@ -14,7 +14,7 @@ class XMLWriter(object):
     """
     Doctest:
 
-        >>>from xmlwriter import XMLWriter
+        >>>from pyx12.xmlwriter import XMLWriter
         >>>writer = XMLWriter()
         >>>writer.doctype(
         ... u"xsa", u"-//LM Garshol//DTD XML Software Autoupdate 1.0//EN//XML",
@@ -97,6 +97,7 @@ class XMLWriter(object):
         for (a, v) in list(attrs.items()):
             self._write(" %s='%s'" % (a, self._escape_attr(v)))
         self._write(">%s</%s>\n" % (self._escape_cont(content), elem))
+        # print("wrote ", str(attrs))
 
     def empty(self, elem, attrs={}):
         """
@@ -138,4 +139,4 @@ class XMLWriter(object):
             .replace(">", "&gt;")
 
     def _write(self, strval):
-        self.out.write(strval.decode(self.encoding))
+        self.out.write(strval)

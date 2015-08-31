@@ -14,11 +14,11 @@ Create a XML rendering of the X12 document
 
 from os.path import commonprefix
 import logging
-
+import re
 # Intrapackage imports
-from errors import EngineError
-from x12xml import x12xml
-from map_walker import pop_to_parent_loop
+from pyx12.errors import EngineError
+from pyx12.x12xml import x12xml
+from pyx12.map_walker import pop_to_parent_loop
 
 logger = logging.getLogger('pyx12.x12xml.simple')
 
@@ -63,6 +63,8 @@ class x12xml_simple(x12xml):
                 self.writer.pop()
             for i in range(match_idx, len(cur_path)):
                 (xname, attrib) = self._get_loop_info(cur_path[i])
+                curr = attrib['id']+ "_" + seg_node.name
+                attrib['id'] = re.sub(r'[^\w+]', "_", curr.strip()).lower()
                 self.writer.push(xname, attrib)
         seg_node_id = self._get_node_id(seg_node, parent, seg_data)
         (xname, attrib) = self._get_seg_info(seg_node_id)
@@ -78,6 +80,9 @@ class x12xml_simple(x12xml):
                 for j in range(len(comp_data)):
                     subele_node = child_node.get_child_node_by_idx(j)
                     (xname, attrib) = self._get_subele_info(subele_node.id)
+                    curr = attrib['id']+ "_" + child_node.name
+
+                    attrib['id'] = re.sub(r'[^\w+]', "_", curr.strip()).lower()
                     self.writer.elem(xname, comp_data[j].get_value(), attrib)
                 self.writer.pop()  # end composite
             elif child_node.is_element():

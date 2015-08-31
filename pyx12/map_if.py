@@ -1,3 +1,4 @@
+#pylint: disable-all
 ######################################################################
 # Copyright (c) 
 # All rights reserved.
@@ -19,12 +20,12 @@ import xml.etree.cElementTree as et
 from pkg_resources import resource_stream
 
 # Intrapackage imports
-from errors import EngineError
-import codes
-import dataele
-import path
-import validation
-from syntax import is_syntax_valid
+from pyx12.errors import EngineError
+from pyx12.codes import ExternalCodes
+from pyx12.dataele import DataElements
+from pyx12.path import X12Path
+import pyx12.validation
+from pyx12.syntax import is_syntax_valid
 
 MAXINT = 2147483647
 
@@ -124,7 +125,7 @@ class x12_node(object):
         """
         if self._x12path:
             return self._x12path
-        p = path.X12Path(self.get_path())
+        p = X12Path(self.get_path())
         self._x12path = p
         return p
 
@@ -187,9 +188,9 @@ class map_if(x12_node):
         #self.cur_iter_node = self
         self.param = param
         #global codes
-        self.ext_codes = codes.ExternalCodes(base_path,
+        self.ext_codes = ExternalCodes(base_path,
                                              param.get('exclude_external_codes'))
-        self.data_elements = dataele.DataElements(base_path)
+        self.data_elements = DataElements(base_path)
 
         self.id = eroot.get('xid')
 
@@ -297,7 +298,7 @@ class map_if(x12_node):
                     if len(pathl) == 1:
                         return child
                     else:
-                        return child.getnodebypath(string.join(pathl[1:], '/'))
+                        return child.getnodebypath('/'.join(pathl[1:]))
         raise EngineError('getnodebypath failed. Path "%s" not found' % spath)
 
     def getnodebypath2(self, path_str):
@@ -305,7 +306,7 @@ class map_if(x12_node):
         @param path: Path string; /1000/2000/2000A/NM102-3
         @type path: string
         """
-        x12path = path.X12Path(path_str)
+        x12path = X12Path(path_str)
         if x12path.empty():
             return None
         for ord1 in sorted(self.pos_map):
@@ -485,7 +486,7 @@ class loop_if(x12_node):
                         if len(pathl) == 1:
                             return child
                         else:
-                            return child.getnodebypath(string.join(pathl[1:], '/'))
+                            return child.getnodebypath('/'.join(pathl[1:]))
                 elif child.is_segment() and len(pathl) == 1:
                     if pathl[0].find('[') == -1:  # No id to match
                         if pathl[0] == child.id:
@@ -508,7 +509,7 @@ class loop_if(x12_node):
         @type path_str: string
         @return: matching node, or None is no match
         """
-        x12path = path.X12Path(path_str)
+        x12path = X12Path(path_str)
         if x12path.empty():
             return None
         for ord1 in sorted(self.pos_map):
@@ -986,7 +987,7 @@ class segment_if(x12_node):
             #self.logger.error('Syntax %s is not valid' % (syntax))
             return None
         syn = [syntax[0]]
-        for i in range(len(syntax[1:]) / 2):
+        for i in range(int(len(syntax[1:]) / 2)):
             syn.append(int(syntax[i * 2 + 1:i * 2 + 3]))
         return syn
 
@@ -1186,8 +1187,7 @@ class element_if(x12_node):
 # Validate based on data_elem_num
 # Then, validate on more specific criteria
         if (not data_type is None) and (data_type == 'R' or data_type[0] == 'N'):
-            elem_strip = string.replace(
-                string.replace(elem_val, '-', ''), '.', '')
+            elem_strip = elem_val.replace('-', '').replace('.', '')
             elem_len = len(elem_strip)
             if len(elem_strip) < min_len:
                 err_str = 'Data element "%s" (%s) is too short: len("%s") = %i < %i (min_len)' % \
@@ -1212,7 +1212,7 @@ class element_if(x12_node):
                 self._error(errh, err_str, '5', elem_val)
                 valid = False
 
-        (res, bad_string) = validation.contains_control_character(elem_val)
+        (res, bad_string) = pyx12.validation.contains_control_character(elem_val)
         if res:
             err_str = 'Data element "%s" (%s), contains an invalid control character(%s)' % \
                 (self.name, self.refdes, bad_string)
@@ -1227,7 +1227,7 @@ class element_if(x12_node):
 
         if not self._is_valid_code(elem_val, errh):
             valid = False
-        if not validation.IsValidDataType(elem_val, data_type, self.root.param.get('charset'), self.root.icvn):
+        if not pyx12.validation.IsValidDataType(elem_val, data_type, self.root.param.get('charset'), self.root.icvn):
             if data_type in ('RD8', 'DT', 'D8', 'D6'):
                 err_str = 'Data element "%s" (%s) contains an invalid date (%s)' % \
                     (self.name, self.refdes, elem_val)
@@ -1246,7 +1246,7 @@ class element_if(x12_node):
         if len(type_list) > 0:
             valid_type = False
             for dtype in type_list:
-                valid_type |= validation.IsValidDataType(elem_val, dtype, self.root.param.get('charset'))
+                valid_type |= pyx12.validation.IsValidDataType(elem_val, dtype, self.root.param.get('charset'))
             if not valid_type:
                 if 'TM' in type_list:
                     err_str = 'Data element "%s" (%s) contains an invalid time (%s)' % \

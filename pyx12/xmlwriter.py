@@ -138,4 +138,4 @@ class XMLWriter(object):
             .replace(">", "&gt;")
 
     def _write(self, strval):
-        self.out.write(strval.decode(self.encoding))
+        self.out.write(strval)

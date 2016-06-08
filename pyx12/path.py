@@ -49,6 +49,10 @@ class X12Path(object):
         @type path_str: string
 
         """
+
+        if not isinstance(path_str, str):
+            path_str = str(path_str)
+
         #self.loop_list =
         self.seg_id = None
         self.id_val = None

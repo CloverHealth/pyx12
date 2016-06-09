@@ -13,7 +13,7 @@ Loop and segment counter
 """
 from collections import OrderedDict
 import pyx12.path
-from decorators import dump_args
+from pyx12.decorators import dump_args
 
 
 class NodeCounter(object):

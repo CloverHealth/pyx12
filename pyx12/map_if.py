@@ -19,12 +19,12 @@ import xml.etree.cElementTree as et
 from pkg_resources import resource_stream
 
 # Intrapackage imports
-from errors import EngineError
-import codes
-import dataele
-import path
-import validation
-from syntax import is_syntax_valid
+from pyx12.errors import EngineError
+import pyx12.codes
+import pyx12.dataele
+import pyx12.path
+import pyx12.validation
+from pyx12.syntax import is_syntax_valid
 
 MAXINT = 2147483647
 
@@ -132,7 +132,7 @@ class x12_node(object):
         """
         if self._x12path:
             return self._x12path
-        p = path.X12Path(self.get_path())
+        p = pyx12.path.X12Path(self.get_path())
         self._x12path = p
         return p
 
@@ -195,9 +195,9 @@ class map_if(x12_node):
         #self.cur_iter_node = self
         self.param = param
         #global codes
-        self.ext_codes = codes.ExternalCodes(base_path,
+        self.ext_codes = pyx12.codes.ExternalCodes(base_path,
                                              param.get('exclude_external_codes'))
-        self.data_elements = dataele.DataElements(base_path)
+        self.data_elements = pyx12.dataele.DataElements(base_path)
 
         self.id = eroot.get('xid')
 
@@ -323,7 +323,7 @@ class map_if(x12_node):
         @param path: Path string; /1000/2000/2000A/NM102-3
         @type path: string
         """
-        x12path = path.X12Path(path_str)
+        x12path = pyx12.path.X12Path(path_str)
         if x12path.empty():
             return None
         for ord1 in sorted(self.pos_map):
@@ -1259,7 +1259,7 @@ class element_if(x12_node):
                 self._error(errh, err_str, '5', elem_val)
                 valid = False
 
-        (res, bad_string) = validation.contains_control_character(elem_val)
+        (res, bad_string) = pyx12.validation.contains_control_character(elem_val)
         if res:
             err_str = 'Data element "%s" (%s), contains an invalid control character(%s)' % \
                 (self.name, self.refdes, bad_string)
@@ -1274,7 +1274,7 @@ class element_if(x12_node):
 
         if not self._is_valid_code(elem_val, errh):
             valid = False
-        if not validation.IsValidDataType(elem_val, data_type, self.root.param.get('charset'), self.root.icvn):
+        if not pyx12.validation.IsValidDataType(elem_val, data_type, self.root.param.get('charset'), self.root.icvn):
             if data_type in ('RD8', 'DT', 'D8', 'D6'):
                 err_str = 'Data element "%s" (%s) contains an invalid date (%s)' % \
                     (self.name, self.refdes, elem_val)
@@ -1293,7 +1293,7 @@ class element_if(x12_node):
         if len(type_list) > 0:
             valid_type = False
             for dtype in type_list:
-                valid_type |= validation.IsValidDataType(elem_val, dtype, self.root.param.get('charset'))
+                valid_type |= pyx12.validation.IsValidDataType(elem_val, dtype, self.root.param.get('charset'))
             if not valid_type:
                 if 'TM' in type_list:
                     err_str = 'Data element "%s" (%s) contains an invalid time (%s)' % \

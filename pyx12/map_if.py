@@ -1,4 +1,3 @@
-#pylint: disable-all
 ######################################################################
 # Copyright (c) 
 # All rights reserved.
@@ -86,7 +85,7 @@ class x12_node(object):
                     return child
                 else:
                     if child.is_loop():
-                        return child.getnodebypath(string.join(pathl[1:], '/'))
+                        return child.getnodebypath('/'.join(pathl[1:]))
                     else:
                         break
         raise EngineError('getnodebypath failed. Path "%s" not found' % path)

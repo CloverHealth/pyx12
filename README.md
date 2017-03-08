@@ -2,6 +2,8 @@
 
 This is a fork of pyx12 that provides Python3 support. It is published to Gemfury as cloverhealth-pyx12.
 
+**NOTE** - The default branch on this fork is `pyx12_python3` instead of master because there are some changes in master that we have not used in quite a long time. The `pyx12_python3` branch has been used consistently without problem.
+
 If one wishes to publish a change to this library, do the following steps:
 
 1. Update the version in `pyx12/version.py`

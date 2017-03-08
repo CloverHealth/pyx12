@@ -1,3 +1,15 @@
+# clover-pyx12
+
+This is a fork of pyx12 that provides Python3 support. It is published to Gemfury as cloverhealth-pyx12.
+
+If one wishes to publish a change to this library, do the following steps:
+
+1. Update the version in `pyx12/version.py`
+2. Run `python setup.py sdist`
+3. Copy the tarred gzipped distribution under the `dist` folder to Gemfury
+
+The rest of the README remains in tact from the original fork
+
 # Pyx12
 
 [![Build Status](https://travis-ci.org/azoner/pyx12.png?branch=master)](https://travis-ci.org/azoner/pyx12)

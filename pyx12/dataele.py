@@ -49,7 +49,9 @@ class DataElements(object):
         else:
             logger.debug("Looking for data element definition file '{}' in package resources".format(dataele_file))
             fd = files(__package__).joinpath('map', dataele_file).open('rb')
-        for eElem in et.parse(fd).iter('data_ele'):
+        with fd:
+            eTree = et.parse(fd)
+        for eElem in eTree.iter('data_ele'):
             ele_num = eElem.get('ele_num')
             data_type = eElem.get('data_type')
             min_len = int(eElem.get('min_len'))

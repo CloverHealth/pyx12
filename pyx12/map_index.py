@@ -45,7 +45,8 @@ class map_index(object):
         else:
             logger.debug("Looking for map index file '{}' in package resources".format(maps_index_file))
             fd = files(__package__).joinpath('map', maps_index_file).open('rb')
-        t = et.parse(fd)
+        with fd:
+            t = et.parse(fd)
         for v in t.iter('version'):
             icvn = v.get('icvn')
             for m in v.iterfind('map'):

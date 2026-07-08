@@ -54,7 +54,9 @@ class ExternalCodes(object):
 
         self.exclude_list = exclude.split(',') if exclude is not None else []
 
-        for cElem in et.parse(code_fd).iter('codeset'):
+        with code_fd:
+            eTree = et.parse(code_fd)
+        for cElem in eTree.iter('codeset'):
             codeset_id = cElem.findtext('id')
             name = cElem.findtext('name')
             data_ele = cElem.findtext('data_ele')

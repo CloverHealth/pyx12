@@ -52,7 +52,7 @@ class XmlTransformTestCase(unittest.TestCase):
         self.assertIn('source', datafiles[datakey])
         #self.assertIn('res997', datafiles[datakey])
         fd_source = self._makeFd(datafiles[datakey]['source'])
-        fd_xml = tempfile.TemporaryFile()
+        fd_xml = tempfile.TemporaryFile(mode='w+', encoding='utf-8')
         fd_result = StringIO()
         self.param.set('xmlout', 'simple')
         result = pyx12.x12n_document.x12n_document(param=self.param, src_file=fd_source,

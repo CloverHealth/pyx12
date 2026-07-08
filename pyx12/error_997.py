@@ -120,8 +120,10 @@ class error_997_visitor(error_visitor.error_visitor):
                     err_codes.append(isa_ele_err_map[elem.ele_pos])
                 elif 'IEA' in err_str:
                     err_codes.append(iea_ele_err_map[elem.ele_pos])
-        # return unique codes
-        return list(set(err_codes))
+        # return unique codes, preserving detection order so that the
+        # "first error" reported in the TA1 segment is deterministic
+        # (list(set(...)) had nondeterministic ordering)
+        return list(dict.fromkeys(err_codes))
 
     def visit_root_post(self, errh):
         """

@@ -65,15 +65,19 @@ def IsValidDataType(str_val, data_type, charset='B', icvn='00401'):
         return False
     return True
 
-rec_N = re.compile("^-?[0-9]+", re.S)
-rec_R = re.compile(r"^-?[0-9]*(\.[0-9]+)?", re.S)
+# X12 data uses the ASCII character set. re.ASCII keeps \s matching only
+# ASCII whitespace; without it Python 3's Unicode-aware \s treats control
+# characters such as chr(0x1D) (group separator) as whitespace, which would
+# wrongly accept them as valid in the extended/basic character classes below.
+rec_N = re.compile("^-?[0-9]+", re.S | re.ASCII)
+rec_R = re.compile(r"^-?[0-9]*(\.[0-9]+)?", re.S | re.ASCII)
 rec_ID_E = re.compile(
-    r"[^A-Z0-9!\"&'()*+,\-\./:;?=\sa-z%~@\[\]_{}\\\|<>#$\s]", re.S)
+    r"[^A-Z0-9!\"&'()*+,\-\./:;?=\sa-z%~@\[\]_{}\\\|<>#$\s]", re.S | re.ASCII)
 rec_ID_E5 = re.compile(
-    r"[^A-Z0-9!\"&'()*+,\-\./:;?=\sa-z%~@\[\]_{}\\\|<>^`#$\s]", re.S)
-rec_ID_B = re.compile(r"[^A-Z0-9!\"&'()*+,\-\./:;?=\s]", re.S)
-rec_DT = re.compile("[^0-9]+", re.S)
-rec_TM = re.compile("[^0-9]+", re.S)
+    r"[^A-Z0-9!\"&'()*+,\-\./:;?=\sa-z%~@\[\]_{}\\\|<>^`#$\s]", re.S | re.ASCII)
+rec_ID_B = re.compile(r"[^A-Z0-9!\"&'()*+,\-\./:;?=\s]", re.S | re.ASCII)
+rec_DT = re.compile("[^0-9]+", re.S | re.ASCII)
+rec_TM = re.compile("[^0-9]+", re.S | re.ASCII)
 
 
 def match_re(short_data_type, val):
@@ -149,7 +153,7 @@ def is_valid_date(data_type, val):
         if len(val) in (6, 8, 12):  # valid lengths for date
             try:
                 if 6 == len(val):  # if 2 digit year, add CC
-                    val = '20' + val if val[0:2] < 50 else '19' + val
+                    val = '20' + val if int(val[0:2]) < 50 else '19' + val
                 year = int(val[0:4])  # get year
                 month = int(val[4:6])
                 day = int(val[6:8])

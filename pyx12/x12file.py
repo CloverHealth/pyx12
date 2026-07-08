@@ -559,10 +559,10 @@ class X12Writer(X12Base):
         @type seg_data: L{segment<segment.Segment>}
         """
         out = seg_data.format(self.seg_term, self.ele_term, self.subele_term) + self.eol
-        self.fd_out.write(out.decode('ascii'))
+        self.fd_out.write(out)
 
     def _write_isa_segment(self, seg_data):
-        """
+        r"""
         Write the ISA segment, using the current delimiters and end of line
 
         ISA*03*SENDER    *01*          *ZZ*SENDER         *ZZ*RECEIVER       *040608*1333*U*00401*000000288*0*P*:~
@@ -577,7 +577,7 @@ class X12Writer(X12Base):
         seg_data.set('ISA16', self.subele_term)
         out = seg_data.format(
             self.seg_term, self.ele_term, self.subele_term) + self.eol
-        self.fd_out.write(out.decode('ascii'))
+        self.fd_out.write(out)
 
     def _get_trailer_segment(self, seg_id, count, id):
         """

@@ -14,7 +14,7 @@ External Codes interface
 
 import os.path
 import logging
-from pkg_resources import resource_stream
+from importlib.resources import files
 import xml.etree.cElementTree as et
 
 # Intrapackage imports
@@ -49,12 +49,14 @@ class ExternalCodes(object):
             logger.debug("Looking for codes file '{}' in map_path '{}'".format(codes_file, base_path))
             code_fd = open(os.path.join(base_path, codes_file))
         else:
-            logger.debug("Looking for codes file '{}' in pkg_resources".format(codes_file))
-            code_fd = resource_stream(__name__, os.path.join('map', codes_file))
+            logger.debug("Looking for codes file '{}' in package resources".format(codes_file))
+            code_fd = files(__package__).joinpath('map', codes_file).open('rb')
 
         self.exclude_list = exclude.split(',') if exclude is not None else []
 
-        for cElem in et.parse(code_fd).iter('codeset'):
+        with code_fd:
+            eTree = et.parse(code_fd)
+        for cElem in eTree.iter('codeset'):
             codeset_id = cElem.findtext('id')
             name = cElem.findtext('name')
             data_ele = cElem.findtext('data_ele')

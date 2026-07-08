@@ -1,14 +1,33 @@
 # clover-pyx12
 
-This is a fork of pyx12 that provides Python3 support. It is published to Gemfury as cloverhealth-pyx12.
+This is a fork of pyx12 that provides Python3 support. It is published to the Clover artifact registry as cloverhealth-pyx12.
 
 **NOTE** - The default branch on this fork is `pyx12_python3` instead of master because there are some changes in master that we have not used in quite a long time. The `pyx12_python3` branch has been used consistently without problem.
 
-If one wishes to publish a change to this library, do the following steps:
+## Development setup
 
-1. Update the version in `pyx12/version.py`
-2. Run `python setup.py sdist`
-3. Copy the tarred gzipped distribution under the `dist` folder to Gemfury
+The `Makefile` provisions a pyenv virtualenv and installs the project (plus
+dev dependencies) in editable mode:
+
+```
+make setup
+```
+
+Individual targets are also available: `make pyenv` (create/refresh the
+virtualenv), `make dependencies` (install base + package dev dependencies),
+and `make clean` (remove build/test artifacts).
+
+## Publishing
+
+The version is set statically in `pyx12/version.py`. Bump it before every
+publish (the registry rejects re-uploads of an existing version), then build
+and upload to the Clover artifact registry:
+
+- `make development_build` — build and upload a development release
+- `make release_build` — build and upload a release
+
+Both targets clean previous artifacts, run `python -m build`, and upload with
+`twine` to `us-python.pkg.dev/clover-sre-001/clover-production`.
 
 The rest of the README remains in tact from the original fork
 

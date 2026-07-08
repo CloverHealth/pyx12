@@ -1,12 +1,10 @@
-$ python setup.py test
-# update version in setup.py, pyx12.__init__.py
+$ python -m unittest discover -s pyx12/test
+# update version in pyx12/version.py
 # verify test is passing on travis
 $ git tag vX.Y.Z
 $ git push origin vX.Y.Z
-$python setup.py sdist upload -r pypitest
-$python setup.py bdist_wheel upload -r pypitest
-$python setup.py sdist upload
-$python setup.py bdist_wheel upload
+$ python -m build
+$ python -m twine upload dist/*
 
 mkvirtualenv pyx12-dist -i pyx12
 functional tests

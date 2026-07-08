@@ -37,7 +37,7 @@ class TestWriter(unittest.TestCase):
 
     def test_write_temp(self):
         (fdesc, filename) = tempfile.mkstemp('.xml', 'pyx12_')
-        fd = os.fdopen(fdesc, 'w+b')
+        fd = os.fdopen(fdesc, 'w+', encoding='utf-8')
         #fd = file(filename, 'rw')
         writer = XMLWriter(fd)
         writer.push(u"x12err")

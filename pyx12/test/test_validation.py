@@ -70,6 +70,15 @@ class BasicDate(unittest.TestCase):
         self.assertTrue(IsValidDataType('20040430', 'DT', 'B'))
         self.assertTrue(IsValidDataType('20040401-20040430', 'RD8', 'B'))
 
+    def testTwoDigitYear(self):
+        # 6-digit dates get a century prefixed based on the 2-digit year.
+        # Regression: the year comparison compared str to int, which raised
+        # TypeError on Python 3 and rejected every valid 6-digit date.
+        self.assertTrue(IsValidDataType('020414', 'DT', 'B'))   # year < 50 -> 2002
+        self.assertTrue(IsValidDataType('490101', 'DT', 'B'))   # boundary  -> 2049
+        self.assertTrue(IsValidDataType('500101', 'DT', 'B'))   # boundary  -> 1950
+        self.assertTrue(IsValidDataType('960229', 'DT', 'B'))   # year >= 50 -> 1996 (leap)
+
     def testInvalidLeapDate(self):
         self.assertFalse(IsValidDataType('990229', 'DT', 'B'))
         self.assertFalse(IsValidDataType('20030229', 'DT', 'B'))
@@ -158,8 +167,8 @@ class ExtendedString(unittest.TestCase):
         self.assertTrue(IsValidDataType('abd1P', 'AN', 'E'))
         self.assertTrue(IsValidDataType('THIS IS A TEST ()', 'AN', 'E'))
         self.assertTrue(IsValidDataType("""BASIC ABCDEFIGHIJKLMNOPQRSTUVWXYZ 0123456789!"&'()+,-./;:?=""", 'AN', 'E'))
-        self.assertTrue(IsValidDataType('extended abcdefghijklmnopqrstuvwxyz%~@[]_{}\|<>#$', 'AN', 'E'))
-        self.assertTrue(IsValidDataType("""Both ABCDEFIGHIJKLMNOPQRSTUVWXYZ 0123456789!"&'()+,-./;:?= abcdefghijklmnopqrstuvwxyz%~@[]_{}\|<>#$""", 'AN', 'E'))
+        self.assertTrue(IsValidDataType(r'extended abcdefghijklmnopqrstuvwxyz%~@[]_{}\|<>#$', 'AN', 'E'))
+        self.assertTrue(IsValidDataType(r"""Both ABCDEFIGHIJKLMNOPQRSTUVWXYZ 0123456789!"&'()+,-./;:?= abcdefghijklmnopqrstuvwxyz%~@[]_{}\|<>#$""", 'AN', 'E'))
         self.assertTrue(IsValidDataType('wharf', 'AN', 'E'))
 
     def testInvalid(self):
@@ -249,11 +258,39 @@ class Extended5010String(unittest.TestCase):
         self.assertTrue(
             IsValidDataType('THIS IS A TEST ()', 'AN', 'E', '00501'))
         self.assertTrue(IsValidDataType("""BASIC ABCDEFIGHIJKLMNOPQRSTUVWXYZ 0123456789!"&'()+,-./;:?=""", 'AN', 'E', '00501'))
-        self.assertTrue(IsValidDataType('extended abcdefghijklmnopqrstuvwxyz%~@[]_{}\|<>#$', 'AN', 'E', '00501'))
-        self.assertTrue(IsValidDataType("""Both ABCDEFIGHIJKLMNOPQRSTUVWXYZ 0123456789!"&'()+,-./;:?= abcdefghijklmnopqrstuvwxyz%~@[]_{}\|<>#$""", 'AN', 'E', '00501'))
+        self.assertTrue(IsValidDataType(r'extended abcdefghijklmnopqrstuvwxyz%~@[]_{}\|<>#$', 'AN', 'E', '00501'))
+        self.assertTrue(IsValidDataType(r"""Both ABCDEFIGHIJKLMNOPQRSTUVWXYZ 0123456789!"&'()+,-./;:?= abcdefghijklmnopqrstuvwxyz%~@[]_{}\|<>#$""", 'AN', 'E', '00501'))
         self.assertTrue(IsValidDataType('wharf', 'AN', 'E', '00501'))
         self.assertTrue(IsValidDataType('_good ^`', 'AN', 'E', '00501'))
 
     def testInvalid(self):
         self.assertFalse(
             IsValidDataType('%s' % (chr(0x1D)), 'AN', 'E', '00501'))
+
+
+class ControlCharacters(unittest.TestCase):
+    """
+    Non-printable ASCII control characters must never be valid X12 data.
+
+    Regression: Python 3's \\s is Unicode-aware and matches separators such
+    as chr(0x1C)-chr(0x1F), so the character-class regexes accepted them as
+    whitespace. Compiling those regexes with re.ASCII restores the intended
+    ASCII-only behavior.
+    """
+    control_chars = [chr(0x1C), chr(0x1D), chr(0x1E), chr(0x1F)]
+
+    def testInvalidBasicString(self):
+        for c in self.control_chars:
+            self.assertFalse(IsValidDataType(c, 'AN', 'B'))
+
+    def testInvalidExtendedString(self):
+        for c in self.control_chars:
+            self.assertFalse(IsValidDataType(c, 'AN', 'E'))
+
+    def testInvalid5010String(self):
+        for c in self.control_chars:
+            self.assertFalse(IsValidDataType(c, 'AN', 'E', '00501'))
+
+    def testInvalid5010Identifier(self):
+        for c in self.control_chars:
+            self.assertFalse(IsValidDataType(c, 'ID', 'E', '00501'))

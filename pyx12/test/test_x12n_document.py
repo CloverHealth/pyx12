@@ -102,6 +102,36 @@ class X12Structure(X12DocumentTestCase):
     def test_trailer_errors(self):
         self._test_997('trailer_errors')
 
+    def test_trailer_errors_ta1_deterministic(self):
+        # Regression: __get_isa_errors returned list(set(...)), so the TA1
+        # error code (the "first" ISA error) depended on set iteration order,
+        # which varies with the process hash seed. Run the generation in
+        # subprocesses under several PYTHONHASHSEED values and confirm the TA1
+        # segment is identical every time.
+        import os
+        import subprocess
+        import sys
+        prog = (
+            "from io import StringIO\n"
+            "import pyx12.x12n_document, pyx12.params\n"
+            "from pyx12.test.x12testdata import datafiles\n"
+            "src = StringIO(datafiles['trailer_errors']['source']); src.seek(0)\n"
+            "out = StringIO(); html = StringIO()\n"
+            "pyx12.x12n_document.x12n_document(pyx12.params.params(), src, out, html, None)\n"
+            "out.seek(0)\n"
+            "print([s.strip() for s in out.read().split('~') "
+            "if s.strip().startswith('TA1')][0])\n"
+        )
+        results = set()
+        for seed in ('0', '1', '2', '3', '42'):
+            env = dict(os.environ, PYTHONHASHSEED=seed)
+            out = subprocess.check_output(
+                [sys.executable, '-c', prog], env=env, text=True)
+            results.add(out.strip())
+        self.assertEqual(len(results), 1,
+                         'TA1 error code is not deterministic across hash '
+                         'seeds: %r' % (results,))
+
     def test_trailing_terms(self):
         self._test_997('trailing_terms')
 

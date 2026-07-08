@@ -18,7 +18,7 @@ Locate the correct xml map file given:
 
 import os.path
 import logging
-from pkg_resources import resource_stream
+from importlib.resources import files
 import xml.etree.cElementTree as et
 
 
@@ -43,9 +43,10 @@ class map_index(object):
                 raise OSError(2, "Pyx12 Map file '{}' does not exist in map path".format(maps_index_file), base_path)
             fd = open(os.path.join(base_path, maps_index_file))
         else:
-            logger.debug("Looking for map index file '{}' in pkg_resources".format(maps_index_file))
-            fd = resource_stream(__name__, os.path.join('map', maps_index_file))
-        t = et.parse(fd)
+            logger.debug("Looking for map index file '{}' in package resources".format(maps_index_file))
+            fd = files(__package__).joinpath('map', maps_index_file).open('rb')
+        with fd:
+            t = et.parse(fd)
         for v in t.iter('version'):
             icvn = v.get('icvn')
             for m in v.iterfind('map'):

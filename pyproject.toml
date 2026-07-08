@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=77.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cloverhealth-pyx12"
+dynamic = ["version"]
+description = "HIPAA X12 validator, parser and converter"
+readme = "README.md"
+license = "BSD-2-Clause"
+license-files = ["LICENSE.txt"]
+requires-python = ">=3.9"
+keywords = ["x12", "hipaa", "healthcare", "edi"]
+authors = [
+    { name = "John Holland", email = "john.holland@swmbh.org" },
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Healthcare Industry",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Topic :: Office/Business",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.urls]
+Homepage = "http://github.com/azoner/pyx12"
+
+[project.scripts]
+x12html = "pyx12.scripts.x12html:main"
+x12valid = "pyx12.scripts.x12valid:main"
+x12info = "pyx12.scripts.x12info:main"
+x12norm = "pyx12.scripts.x12norm:main"
+x12xml = "pyx12.scripts.x12xml:main"
+xmlx12 = "pyx12.scripts.xmlx12:main"
+
+[tool.setuptools]
+packages = ["pyx12", "pyx12.scripts"]
+
+[tool.setuptools.dynamic]
+version = { attr = "pyx12.version.__version__" }
+
+[tool.setuptools.package-data]
+pyx12 = ["map/*.xml", "map/*.xsd", "map/*.dtd", "map/*.rng", "*.md"]

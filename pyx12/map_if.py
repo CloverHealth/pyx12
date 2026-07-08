@@ -16,7 +16,7 @@ import string
 import sys
 import re
 import xml.etree.cElementTree as et
-from pkg_resources import resource_stream
+from importlib.resources import files
 
 # Intrapackage imports
 from pyx12.errors import EngineError
@@ -536,7 +536,7 @@ class loop_if(x12_node):
         @type path_str: string
         @return: matching node, or None is no match
         """
-        x12path = path.X12Path(path_str)
+        x12path = pyx12.path.X12Path(path_str)
         if x12path.empty():
             return None
         for ord1 in sorted(self.pos_map):
@@ -789,7 +789,7 @@ class segment_if(x12_node):
         @type path_str: string
         @return: matching node, or None is no match
         """
-        x12path = path.X12Path(path_str)
+        x12path = pyx12.path.X12Path(path_str)
         if x12path.empty():
             return None
         if x12path.ele_idx is None:
@@ -1534,12 +1534,13 @@ def load_map_file(map_file, param, map_path=None):
             raise OSError(2, "Pyx12 map file '{}' does not exist in map path".format(map_file), map_path)
         map_fd = open(os.path.join(map_path, map_file))
     else:
-        logger.debug("Looking for map file '{}' in pkg_resources".format(map_file))
-        map_fd = resource_stream(__name__, os.path.join('map', map_file))
+        logger.debug("Looking for map file '{}' in package resources".format(map_file))
+        map_fd = files(__package__).joinpath('map', map_file).open('rb')
     imap = None
     try:
         logger.debug('Create map from %s' % (map_file))
-        etree = et.parse(map_fd)
+        with map_fd:
+            etree = et.parse(map_fd)
         imap = map_if(etree.getroot(), param, map_path)
     except AssertionError:
         logger.error('Load of map file failed: %s' % (map_file))

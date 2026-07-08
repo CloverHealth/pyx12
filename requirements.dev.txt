@@ -1,8 +1,9 @@
 autopep8
 ipdb
 ipython
-pep8
+pycodestyle
 pylint
-yolk
 coverage
-nose
+pytest
+build
+twine

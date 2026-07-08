@@ -15,7 +15,7 @@ Interface to normalized Data Elements
 import os.path
 import logging
 import xml.etree.cElementTree as et
-from pkg_resources import resource_stream
+from importlib.resources import files
 
 # Intrapackage imports
 from pyx12.errors import EngineError
@@ -47,8 +47,8 @@ class DataElements(object):
             logger.debug("Looking for data element definition file '{}' in map_path '{}'".format(dataele_file, base_path))
             fd = open(os.path.join(base_path, dataele_file))
         else:
-            logger.debug("Looking for data element definition file '{}' in pkg_resources".format(dataele_file))
-            fd = resource_stream(__name__, os.path.join('map', dataele_file))
+            logger.debug("Looking for data element definition file '{}' in package resources".format(dataele_file))
+            fd = files(__package__).joinpath('map', dataele_file).open('rb')
         for eElem in et.parse(fd).iter('data_ele'):
             ele_num = eElem.get('ele_num')
             data_type = eElem.get('data_type')

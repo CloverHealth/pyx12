@@ -1,10 +1,15 @@
 language: python
 
+python:
+    - "3.9"
+    - "3.12"
+    - "3.14"
+
 install:
-    - pip install coveralls
+    - pip install coverage coveralls
 
 script:
-    - nosetests --with-coverage --cover-tests --cover-package=pyx12 --cover-erase
+    - coverage run --source=pyx12 -m unittest discover -s pyx12/test
 
 after_success:
     - coveralls

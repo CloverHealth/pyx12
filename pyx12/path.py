@@ -37,7 +37,7 @@ class X12Path(object):
     """
 
     re_seg_id = '(?P<seg_id>[A-Z][A-Z0-9]{1,2})?'
-    re_id_val = '(\[(?P<id_val>[A-Z0-9]+)\])?'
+    re_id_val = r'(\[(?P<id_val>[A-Z0-9]+)\])?'
     re_ele_idx = '(?P<ele_idx>[0-9]{2})?'
     re_subele_idx = '(-(?P<subele_idx>[0-9]+))?'
     re_str = '^%s%s%s%s$' % (re_seg_id, re_id_val, re_ele_idx, re_subele_idx)

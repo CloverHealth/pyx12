@@ -562,7 +562,7 @@ class X12Writer(X12Base):
         self.fd_out.write(out.decode('ascii'))
 
     def _write_isa_segment(self, seg_data):
-        """
+        r"""
         Write the ISA segment, using the current delimiters and end of line
 
         ISA*03*SENDER    *01*          *ZZ*SENDER         *ZZ*RECEIVER       *040608*1333*U*00401*000000288*0*P*:~
